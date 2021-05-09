@@ -6,6 +6,7 @@ var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
 var motorsRouter = require("./routes/motors");
+const serial = require("./serial");
 
 var app = express();
 
