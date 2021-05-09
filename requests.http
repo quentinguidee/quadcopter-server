@@ -1,0 +1,9 @@
+@url = http://localhost:3000
+
+###
+
+GET {{url}}/
+
+###
+
+POST {{url}}/motors?id=3&action=1
