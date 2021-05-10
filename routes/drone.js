@@ -1,15 +1,23 @@
 var express = require("express");
-const serial = require("../serial");
+const { connect, serialWrite } = require("../serial");
 var router = express.Router();
 
-router.post("/", function (req, res, next) {
-    const action = Number.parseInt(req.query.action);
+router.post("/connect", function (req, res, next) {
+    connect()
+        .then(() => {
+            res.json({ message: "Connected" });
+        })
+        .catch((err) => {
+            res.json({ message: err.message });
+        });
+});
 
-    serial.write(`$D${action}\n`);
+router.post("/off", serialWrite("D0"), function (req, res, next) {
+    res.json({ message: "Shutdown" });
+});
 
-    res.json({
-        action: Number.parseInt(req.query.action),
-    });
+router.post("/on", serialWrite("D1"), function (req, res, next) {
+    res.json({ message: "Startup" });
 });
 
 module.exports = router;

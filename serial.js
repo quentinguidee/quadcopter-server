@@ -1,15 +1,41 @@
 var Serial = require("serialport");
 
-var serial = new Serial("/dev/tty.usbmodem14201", {
-    baudRate: 38400,
-});
+var serial = {
+    connection: undefined,
+};
 
-serial.on("open", () => {
-    console.log("Serial communication opened.");
-});
+function connect() {
+    serial.connection = new Serial("/dev/tty.usbmodem14201", {
+        baudRate: 38400,
+    });
 
-const parser = serial.pipe(new Serial.parsers.Readline());
+    return new Promise((resolve, reject) => {
+        const parser = serial.connection.pipe(new Serial.parsers.Readline());
+        parser.on("data", (data) => console.log(data));
 
-parser.on("data", (data) => console.log(data));
+        serial.connection.on("open", () => {
+            console.log("Serial communication opened.");
+            resolve();
+        });
 
-module.exports = serial;
+        serial.connection.on("error", (err) => {
+            console.error(err);
+            reject(err);
+        });
+    });
+}
+
+function serialWrite(message) {
+    return async (req, res, next) => {
+        serial.connection.write(`$${message}\n`, (err) => {
+            if (err) {
+                console.error(err.message);
+                res.json({ message: err.message });
+            }
+
+            next();
+        });
+    };
+}
+
+module.exports = { serial, connect, serialWrite };

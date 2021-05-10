@@ -1,4 +1,4 @@
-@url = http://localhost:3000
+@url = http://localhost:3001
 
 ###
 
@@ -17,4 +17,4 @@ POST {{url}}/drone?action=0
 ###
 
 // Startup drone
-POST {{url}}/drone?action=1
+POST {{url}}/drone/on
