@@ -30,7 +30,7 @@ function serialWrite(message) {
         serial.connection.write(`$${message}\n`, (err) => {
             if (err) {
                 console.error(err.message);
-                res.json({ message: err.message });
+                res.status(500).json({ message: err.message });
             }
 
             next();
