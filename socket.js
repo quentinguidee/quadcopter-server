@@ -1,4 +1,4 @@
-const { getState } = require("./drone");
+const { drone } = require("./drone");
 
 const io = require("socket.io")({
     cors: true,
@@ -10,8 +10,8 @@ const socket = {
 
 socket.io.on("connection", (socket) => {
     console.log("Client connected");
-    const state = getState();
-    socket.emit("state", state);
+    socket.emit("state", drone.state);
+    socket.emit("leds", drone.leds);
 });
 
 module.exports = socket;
