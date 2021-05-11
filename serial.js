@@ -1,4 +1,5 @@
 var Serial = require("serialport");
+const { setState, getState } = require("./drone");
 const socket = require("./socket");
 
 var serial = {
@@ -19,6 +20,9 @@ function connect() {
 
         serial.connection.on("open", () => {
             console.log("Serial communication opened.");
+            setState("off");
+            const state = getState();
+            socket.io.emit("state", state);
             resolve();
         });
 

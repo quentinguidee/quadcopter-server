@@ -1,4 +1,6 @@
 var express = require("express");
+const { setState } = require("../drone");
+const socket = require("../socket");
 const { connect, serialWrite } = require("../serial");
 var router = express.Router();
 
@@ -13,10 +15,16 @@ router.post("/connect", function (req, res, next) {
 });
 
 router.post("/off", serialWrite("D0"), function (req, res, next) {
+    const state = "off";
+    setState(state);
+    socket.io.emit("state", state);
     res.json({ message: "Shutdown" });
 });
 
 router.post("/on", serialWrite("D1"), function (req, res, next) {
+    const state = "on";
+    setState(state);
+    socket.io.emit("state", state);
     res.json({ message: "Startup" });
 });
 
