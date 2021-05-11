@@ -1,5 +1,5 @@
 var express = require("express");
-const { setState, drone } = require("../drone");
+const { drone } = require("../drone");
 const socket = require("../socket");
 const { connect, serialWrite } = require("../serial");
 var router = express.Router();
