@@ -1,4 +1,5 @@
 var Serial = require("serialport");
+const socket = require("./socket");
 
 var serial = {
     connection: undefined,
@@ -11,7 +12,10 @@ function connect() {
 
     return new Promise((resolve, reject) => {
         const parser = serial.connection.pipe(new Serial.parsers.Readline());
-        parser.on("data", (data) => console.log(data));
+        parser.on("data", (data) => {
+            console.log(data);
+            socket.io.emit("logs", data);
+        });
 
         serial.connection.on("open", () => {
             console.log("Serial communication opened.");

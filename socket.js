@@ -1,7 +1,13 @@
-const io = require("socket.io")();
-
-io.on("connection", (socket) => {
-    console.log(socket);
+const io = require("socket.io")({
+    cors: true,
 });
 
-module.exports = io;
+const socket = {
+    io: io,
+};
+
+socket.io.on("connection", (socket) => {
+    console.log("Client connected");
+});
+
+module.exports = socket;
