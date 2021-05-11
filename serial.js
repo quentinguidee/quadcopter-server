@@ -10,12 +10,29 @@ function handleMessage(message) {
     if (message.length === 1) return;
     if (message[0] !== "#") return;
 
-    if (message[1] === "L") {
+    const category = message[1];
+
+    if (category === "L") {
         // Leds
         const led = message[2];
         const status = message[3] === "1" ? "on" : "off";
         drone.leds[`led${led}`] = status;
         socket.io.emit("leds", drone.leds);
+        return;
+    }
+
+    if (category === "D") {
+        const command = message[2];
+        switch (command) {
+            case "0":
+                drone.state = "off";
+                break;
+            case "1":
+                drone.state = "on";
+                break;
+        }
+        socket.io.emit("state", drone.state);
+        return;
     }
 }
 

@@ -15,21 +15,11 @@ router.post("/connect", function (req, res, next) {
 });
 
 router.post("/off", serialWrite("D0"), function (req, res, next) {
-    const state = "off";
-    drone.state = state;
-
-    socket.io.emit("state", drone.state);
-
-    res.json({ message: "Shutdown" });
+    res.json({ message: "Send shutdown command" });
 });
 
 router.post("/on", serialWrite("D1"), function (req, res, next) {
-    const state = "on";
-    drone.state = state;
-
-    socket.io.emit("state", drone.state);
-
-    res.json({ message: "Startup" });
+    res.json({ message: "Send startup command" });
 });
 
 module.exports = router;
