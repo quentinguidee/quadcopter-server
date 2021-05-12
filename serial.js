@@ -1,5 +1,5 @@
 var Serial = require("serialport");
-const { drone } = require("./drone");
+const drone = require("./drone");
 const socket = require("./socket");
 
 var serial = {
@@ -15,23 +15,21 @@ function handleMessage(message) {
     if (category === "L") {
         // Leds
         const led = message[2];
-        const status = message[3] === "1" ? "on" : "off";
-        drone.leds[`led${led}`] = status;
-        socket.io.emit("leds", drone.leds);
+        message[3] === "1" ? drone.ledOn(led) : drone.ledOff(led);
         return;
     }
 
     if (category === "D") {
+        // Drone
         const command = message[2];
         switch (command) {
             case "0":
-                drone.state = "off";
+                drone.off();
                 break;
             case "1":
-                drone.state = "on";
+                drone.on();
                 break;
         }
-        socket.io.emit("state", drone.state);
         return;
     }
 }
@@ -51,16 +49,14 @@ function connect() {
 
         serial.connection.on("open", () => {
             console.log("Serial communication opened.");
-            drone.state = "off";
-            socket.io.emit("state", "off");
+            drone.off();
             resolve();
         });
 
         serial.connection.on("close", (data) => {
             console.log("Serial communication closed.");
             console.log(data);
-            drone.state = "disconnected";
-            socket.io.emit("state", "disconnected");
+            drone.disconnected();
         });
 
         serial.connection.on("error", (err) => {
