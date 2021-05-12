@@ -56,6 +56,13 @@ function connect() {
             resolve();
         });
 
+        serial.connection.on("close", (data) => {
+            console.log("Serial communication closed.");
+            console.log(data);
+            drone.state = "disconnected";
+            socket.io.emit("state", "disconnected");
+        });
+
         serial.connection.on("error", (err) => {
             console.error(err);
             reject(err);
