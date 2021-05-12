@@ -32,6 +32,28 @@ function handleMessage(message) {
         }
         return;
     }
+
+    if (category === "M") {
+        // Motors
+        const motor = message[2];
+        if (message[3] === "S") {
+            // Motor speed changed
+            const speed = message.substring(4);
+            drone.motorSpeedChanged(motor, Number.parseInt(speed));
+            return;
+        }
+
+        const command = message[3];
+        switch (command) {
+            case "0":
+                drone.motorOff(motor);
+                break;
+            case "1":
+                drone.motorOn(motor);
+                break;
+        }
+        return;
+    }
 }
 
 function connect() {
