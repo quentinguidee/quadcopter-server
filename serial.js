@@ -8,7 +8,7 @@ var serial = {
 
 function handleMessage(message) {
     if (message.length === 1) return;
-    if (message[0] !== "#") return;
+    if (message[0] !== "#") return socket.io.emit("logs", message);
 
     const category = message[1];
 
@@ -43,7 +43,6 @@ function connect() {
         const parser = serial.connection.pipe(new Serial.parsers.Readline());
         parser.on("data", (data) => {
             console.log(data);
-            socket.io.emit("logs", data);
             handleMessage(data);
         });
 
