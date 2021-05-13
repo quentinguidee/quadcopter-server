@@ -6,6 +6,18 @@ var serial = {
     connection: undefined,
 };
 
+function parseCoordinates(message) {
+    const indexX = message.indexOf("X");
+    const indexY = message.indexOf("Y");
+    const indexZ = message.indexOf("Z");
+
+    return {
+        x: Number.parseFloat(message.substring(indexX + 1, indexY)),
+        y: Number.parseFloat(message.substring(indexY + 1, indexZ)),
+        z: Number.parseFloat(message.substring(indexZ + 1)),
+    };
+}
+
 function handleMessage(message) {
     if (message.length === 1) return;
     if (message[0] !== "#") return socket.io.emit("logs", message);
@@ -58,6 +70,19 @@ function handleMessage(message) {
     if (category === "A") {
         // Accelerometer
         const command = message[2];
+
+        if (command === "P") {
+            // Position
+            drone.setPosition(parseCoordinates(message));
+            return;
+        }
+
+        if (command === "A") {
+            // Angle
+            drone.setAngle(parseCoordinates(message));
+            return;
+        }
+
         switch (command) {
             case "1":
                 // Startup

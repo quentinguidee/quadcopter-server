@@ -8,6 +8,16 @@ var drone = {
     // Variables
     state: DISCONNECTED,
     accelerometer: DISCONNECTED,
+    position: {
+        x: 0,
+        y: 0,
+        z: 0,
+    },
+    angle: {
+        x: 0,
+        y: 0,
+        z: 0,
+    },
     leds: {
         led1: DISCONNECTED,
         led2: DISCONNECTED,
@@ -41,6 +51,9 @@ var drone = {
     accelerometerOn: () => setAccelerometerState(ON),
     accelerometerDisconnected: () => setAccelerometerState(DISCONNECTED),
 
+    setPosition: setPosition,
+    setAngle: setAngle,
+
     ledOn: (id) => setLedState(id, ON),
     ledOff: (id) => setLedState(id, OFF),
     ledDisconnected: (id) => setLedState(id, DISCONNECTED),
@@ -60,6 +73,14 @@ function setAccelerometerState(state) {
     socket.io.emit("accelerometer", drone.accelerometer);
 }
 
+function setPosition(position) {
+    drone.position = position;
+}
+
+function setAngle(angle) {
+    drone.angle = angle;
+}
+
 function setLedState(id, state) {
     drone.leds[`led${id}`] = state;
     socket.io.emit("leds", drone.leds);
@@ -75,6 +96,8 @@ function setMotorSpeed(id, speed) {
 
 setInterval(() => {
     socket.io.emit("motors", drone.motors);
+    socket.io.emit("position", drone.position);
+    socket.io.emit("angle", drone.angle);
 }, 200);
 
 module.exports = drone;
