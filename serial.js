@@ -54,6 +54,21 @@ function handleMessage(message) {
         }
         return;
     }
+
+    if (category === "A") {
+        // Accelerometer
+        const command = message[2];
+        switch (command) {
+            case "1":
+                // Startup
+                drone.accelerometerOn();
+                break;
+            case "2":
+                // Calibrated
+                break;
+        }
+        return;
+    }
 }
 
 function connect() {

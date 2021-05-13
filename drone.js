@@ -7,6 +7,7 @@ const OFF = "off";
 var drone = {
     // Variables
     state: DISCONNECTED,
+    accelerometer: DISCONNECTED,
     leds: {
         led1: DISCONNECTED,
         led2: DISCONNECTED,
@@ -37,6 +38,9 @@ var drone = {
     off: () => setState(OFF),
     disconnected: () => setState(DISCONNECTED),
 
+    accelerometerOn: () => setAccelerometerState(ON),
+    accelerometerDisconnected: () => setAccelerometerState(DISCONNECTED),
+
     ledOn: (id) => setLedState(id, ON),
     ledOff: (id) => setLedState(id, OFF),
     ledDisconnected: (id) => setLedState(id, DISCONNECTED),
@@ -49,6 +53,11 @@ var drone = {
 function setState(state) {
     drone.state = state;
     socket.io.emit("state", drone.state);
+}
+
+function setAccelerometerState(state) {
+    drone.accelerometer = state;
+    socket.io.emit("accelerometer", drone.accelerometer);
 }
 
 function setLedState(id, state) {
