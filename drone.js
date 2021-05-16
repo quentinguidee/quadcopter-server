@@ -3,6 +3,7 @@ let socket = require("./socket");
 const DISCONNECTED = "disconnected";
 const ON = "on";
 const OFF = "off";
+const MOTORS_TEST = "motorstest";
 
 var drone = {
     // Variables
@@ -44,9 +45,13 @@ var drone = {
     },
 
     // Methods
+    telemetryLost: telemetryLost,
+
     on: () => setState(ON),
     off: () => setState(OFF),
     disconnected: () => setState(DISCONNECTED),
+    startMotorsTest: () => setState(MOTORS_TEST),
+    stopMotorsTest: () => setState(ON),
 
     accelerometerOn: () => setAccelerometerState(ON),
     accelerometerDisconnected: () => setAccelerometerState(DISCONNECTED),
@@ -60,6 +65,7 @@ var drone = {
 
     motorOn: (id) => setMotorState(id, ON),
     motorOff: (id) => setMotorState(id, OFF),
+    motorDisconnected: (id) => setMotorState(id, DISCONNECTED),
     motorSpeedChanged: (id, speed) => setMotorSpeed(id, speed),
 };
 
@@ -87,11 +93,30 @@ function setLedState(id, state) {
 }
 
 function setMotorState(id, state) {
-    drone.motors[`motor${id}`].state = state;
+    const motor = drone.motors[`motor${id}`];
+    motor.state = state;
+    if (state === "disconnected") {
+        motor.speed = undefined;
+    }
 }
 
 function setMotorSpeed(id, speed) {
     drone.motors[`motor${id}`].speed = speed;
+}
+
+function telemetryLost() {
+    drone.disconnected();
+    setAccelerometerState(DISCONNECTED);
+    drone.setPosition({ x: 0, y: 0, z: 0 });
+    drone.setAngle({ x: 0, y: 0, z: 0 });
+    drone.ledDisconnected(1);
+    drone.ledDisconnected(2);
+    drone.ledDisconnected(3);
+    drone.ledDisconnected(4);
+    drone.motorDisconnected(1);
+    drone.motorDisconnected(2);
+    drone.motorDisconnected(3);
+    drone.motorDisconnected(4);
 }
 
 setInterval(() => {

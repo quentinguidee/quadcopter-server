@@ -41,6 +41,12 @@ function handleMessage(message) {
             case "1":
                 drone.on();
                 break;
+            case "4":
+                drone.startMotorsTest();
+                break;
+            case "5":
+                drone.stopMotorsTest();
+                break;
         }
         return;
     }
@@ -117,6 +123,7 @@ function connect() {
         serial.connection.on("close", (data) => {
             console.log("Serial communication closed.");
             console.log(data);
+            drone.telemetryLost();
             drone.disconnected();
         });
 

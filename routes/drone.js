@@ -22,4 +22,12 @@ router.post("/on", serialWrite("D1"), function (req, res, next) {
     res.json({ message: "Send startup command" });
 });
 
+router.post("/motorstest/on", serialWrite("D4"), function (req, res, next) {
+    res.json({ message: "Send start motors test command" });
+});
+
+router.post("/motorstest/off", serialWrite("D5"), function (req, res, next) {
+    res.json({ message: "Send stop motors test command" });
+});
+
 module.exports = router;
