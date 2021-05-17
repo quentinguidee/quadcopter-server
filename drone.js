@@ -1,6 +1,8 @@
 let socket = require("./socket");
 
 const DISCONNECTED = "disconnected";
+const FAILED_TO_SETUP = "failed-to-setup";
+const IN_SETUP = "in-setup";
 const ON = "on";
 const OFF = "off";
 const MOTORS_TEST = "motorstest";
@@ -52,6 +54,8 @@ var drone = {
     disconnected: () => setState(DISCONNECTED),
     startMotorsTest: () => setState(MOTORS_TEST),
     stopMotorsTest: () => setState(ON),
+    failedToSetup: () => setState(FAILED_TO_SETUP),
+    inSetup: () => setState(IN_SETUP),
 
     accelerometerOn: () => setAccelerometerState(ON),
     accelerometerDisconnected: () => setAccelerometerState(DISCONNECTED),
@@ -66,6 +70,7 @@ var drone = {
     motorOn: (id) => setMotorState(id, ON),
     motorOff: (id) => setMotorState(id, OFF),
     motorDisconnected: (id) => setMotorState(id, DISCONNECTED),
+    motorFailedToSetup: (id) => setMotorState(id, FAILED_TO_SETUP),
     motorSpeedChanged: (id, speed) => setMotorSpeed(id, speed),
 };
 

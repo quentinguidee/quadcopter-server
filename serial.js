@@ -47,6 +47,11 @@ function handleMessage(message) {
             case "5":
                 drone.stopMotorsTest();
                 break;
+            case "6":
+                drone.failedToSetup();
+                break;
+            case "7":
+                drone.off();
         }
         return;
     }
@@ -68,6 +73,12 @@ function handleMessage(message) {
                 break;
             case "1":
                 drone.motorOn(motor);
+                break;
+            case "2":
+                drone.motorOn(motor);
+                break;
+            case "3":
+                drone.motorFailedToSetup(motor);
                 break;
         }
         return;
@@ -116,7 +127,7 @@ function connect() {
 
         serial.connection.on("open", () => {
             console.log("Serial communication opened.");
-            drone.off();
+            drone.inSetup();
             resolve();
         });
 
