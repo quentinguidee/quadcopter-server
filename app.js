@@ -8,7 +8,6 @@ var cors = require("cors");
 var indexRouter = require("./routes/index");
 var motorsRouter = require("./routes/motors");
 var droneRouter = require("./routes/drone");
-const serial = require("./serial");
 
 var app = express();
 
