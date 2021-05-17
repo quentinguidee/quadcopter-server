@@ -95,7 +95,7 @@ function setLedState(id, state) {
 function setMotorState(id, state) {
     const motor = drone.motors[`motor${id}`];
     motor.state = state;
-    if (state === "disconnected") {
+    if (state === "disconnected" || state === "off") {
         motor.speed = undefined;
     }
 }
