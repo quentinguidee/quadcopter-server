@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 
-const { startTimer, stopTimer, timer } = require("../timer");
+const { startTimer, stopTimer, resetTimer, timer } = require("../timer");
 const procedures = require("../procedures-list");
 const { commands } = require("../commands");
 const drone = require("../drone");
@@ -54,6 +54,12 @@ router.post("/:name/start", function (req, res, next) {
 
 router.post("/:name/stop", function (req, res, next) {
     stopTimer();
+    res.json({ message: "Ok" });
+});
+
+router.post("/:name/reset", function (req, res, next) {
+    drone.setProcedure(undefined);
+    resetTimer();
     res.json({ message: "Ok" });
 });
 

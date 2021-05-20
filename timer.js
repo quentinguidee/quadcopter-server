@@ -44,7 +44,6 @@ function startTimer(start, stop, action) {
     console.log("a");
     interval = setInterval(() => {
         timer.current = increment(timer.current);
-        socket.io.emit("timer", timer);
 
         if (
             timer.current.minus === stop.minus &&
@@ -55,6 +54,7 @@ function startTimer(start, stop, action) {
             timer.finished = true;
         }
 
+        socket.io.emit("timer", timer);
         action(timer.current);
     }, 1000);
 }
@@ -64,4 +64,17 @@ function stopTimer() {
     timer.running = false;
 }
 
-module.exports = { timer, startTimer, stopTimer };
+function resetTimer() {
+    stopTimer();
+
+    timer.finished = false;
+    timer.current = {
+        minus: false,
+        minutes: 2,
+        seconds: 0,
+    };
+
+    socket.io.emit("timer", timer);
+}
+
+module.exports = { timer, startTimer, stopTimer, resetTimer };
