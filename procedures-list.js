@@ -3,6 +3,7 @@ const drone = require("./drone");
 const { connect } = require("./serial");
 const { emergencyStop } = require("./drone");
 const { stopTimer } = require("./timer");
+const { commands } = require("./commands");
 
 const procedures = {
     "motors-test": {
@@ -12,32 +13,32 @@ const procedures = {
             {
                 name: "Connect",
                 time: { minus: true, minutes: 0, seconds: 15 },
-                do: connect,
-                ifFail: stopTimer,
+                do: commands.connect,
+                ifFail: commands.stopCountdown,
             },
             {
                 name: "Startup",
                 time: { minus: true, minutes: 0, seconds: 10 },
-                do: drone.on,
-                ifFail: stopTimer,
+                do: commands.on,
+                ifFail: commands.stopCountdown,
             },
             {
                 name: "Motors on",
                 time: { minus: true, minutes: 0, seconds: 0 },
-                do: drone.startMotorsTest,
-                ifFail: stopTimer,
+                do: commands.startMotorsTest,
+                ifFail: commands.stopCountdown,
             },
             {
                 name: "Motors off",
                 time: { minus: false, minutes: 0, seconds: 5 },
-                do: drone.stopMotorsTest,
-                ifFail: emergencyStop,
+                do: commands.stopMotorsTest,
+                ifFail: commands.emergencyStop,
             },
             {
                 name: "Shutdown",
                 time: { minus: false, minutes: 0, seconds: 10 },
-                do: drone.off,
-                ifFail: emergencyStop,
+                do: commands.off,
+                ifFail: commands.emergencyStop,
             },
         ],
     },

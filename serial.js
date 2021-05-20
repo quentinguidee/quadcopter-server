@@ -140,22 +140,20 @@ function connect() {
 
         serial.connection.on("error", (err) => {
             console.error(err);
-            reject(err);
+            reject({ error: true, message: err.message });
         });
     });
 }
 
 function serialWrite(message) {
-    return async (req, res, next) => {
+    return new Promise((resolve, reject) => {
         serial.connection.write(`$${message}\n`, (err) => {
             if (err) {
-                console.error(err.message);
-                res.status(500).json({ message: err.message });
+                reject({ error: true });
             }
-
-            next();
+            resolve({ message: "ok" });
         });
-    };
+    });
 }
 
 module.exports = { serial, connect, serialWrite };

@@ -3,6 +3,7 @@ var router = express.Router();
 
 const { startTimer, stopTimer } = require("../timer");
 const procedures = require("../procedures-list");
+const { commands } = require("../commands");
 
 /**
  * test-motors/        => Retourne la procédure
@@ -24,8 +25,19 @@ router.post("/:name/start", function (req, res, next) {
                 event.time.minutes === time.minutes &&
                 event.time.seconds === time.seconds
             ) {
-                event.do();
-                // else event.ifFail()
+                event
+                    .do()
+                    .then((res) => console.log(res))
+                    .catch((err) => {
+                        console.error(err);
+                        event
+                            .ifFail()
+                            .then((res) => console.log(res))
+                            .catch((err) => {
+                                console.error(err);
+                                commands.emergencyStop();
+                            });
+                    });
             }
         });
     });
