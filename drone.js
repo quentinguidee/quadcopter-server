@@ -1,4 +1,5 @@
 let socket = require("./socket");
+const { stopTimer } = require("./timer");
 
 const DISCONNECTED = "disconnected";
 const FAILED_TO_SETUP = "failed-to-setup";
@@ -72,6 +73,8 @@ var drone = {
     motorDisconnected: (id) => setMotorState(id, DISCONNECTED),
     motorFailedToSetup: (id) => setMotorState(id, FAILED_TO_SETUP),
     motorSpeedChanged: (id, speed) => setMotorSpeed(id, speed),
+
+    emergencyStop: () => emergencyStop(),
 };
 
 function setState(state) {
@@ -122,6 +125,12 @@ function telemetryLost() {
     drone.motorDisconnected(2);
     drone.motorDisconnected(3);
     drone.motorDisconnected(4);
+}
+
+function emergencyStop() {
+    console.log("Emergency Stop.");
+
+    stopTimer();
 }
 
 setInterval(() => {

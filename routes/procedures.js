@@ -1,5 +1,9 @@
 var express = require("express");
+const { default: fetch } = require("node-fetch");
+const { emergencyStop } = require("../drone");
+const drone = require("../drone");
 const { startTimer, stopTimer } = require("../timer");
+const { connect } = require("../serial");
 var router = express.Router();
 
 const procedures = {
@@ -10,27 +14,32 @@ const procedures = {
             {
                 name: "Connect",
                 time: { minus: true, minutes: 0, seconds: 15 },
-                request: "/drone/connect",
+                do: connect,
+                ifFail: stopTimer,
             },
             {
                 name: "Startup",
                 time: { minus: true, minutes: 0, seconds: 10 },
-                request: "/drone/on",
+                do: drone.on,
+                ifFail: stopTimer,
             },
             {
                 name: "Motors on",
                 time: { minus: true, minutes: 0, seconds: 0 },
-                request: "/motorstest/on",
+                do: drone.startMotorsTest,
+                ifFail: stopTimer,
             },
             {
                 name: "Motors off",
                 time: { minus: false, minutes: 0, seconds: 5 },
-                request: "/motorstest/off",
+                do: drone.stopMotorsTest,
+                ifFail: emergencyStop,
             },
             {
                 name: "Shutdown",
                 time: { minus: false, minutes: 0, seconds: 10 },
-                request: "/drone/off",
+                do: drone.off,
+                ifFail: emergencyStop,
             },
         ],
     },
@@ -48,7 +57,20 @@ router.get("/:name", function (req, res, next) {
 
 router.post("/:name/start", function (req, res, next) {
     const procedure = procedures[req.params.name];
-    startTimer(procedure.start, procedure.stop);
+
+    startTimer(procedure.start, procedure.stop, (time) => {
+        procedure.events.forEach((event) => {
+            if (
+                event.time.minus === time.minus &&
+                event.time.minutes === time.minutes &&
+                event.time.seconds === time.seconds
+            ) {
+                event.do();
+                // else event.ifFail()
+            }
+        });
+    });
+
     res.json({ message: "Ok" });
 });
 

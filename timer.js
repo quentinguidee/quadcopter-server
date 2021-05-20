@@ -31,7 +31,7 @@ function increment(current) {
     return { ...current, seconds: seconds + 1 };
 }
 
-function startTimer(start, stop) {
+function startTimer(start, stop, action) {
     if (running) {
         stopTimer();
     }
@@ -43,6 +43,7 @@ function startTimer(start, stop) {
     interval = setInterval(() => {
         time = increment(time);
         socket.io.emit("timer", time);
+
         if (
             time.minus === stop.minus &&
             time.minutes >= stop.minutes &&
@@ -50,6 +51,8 @@ function startTimer(start, stop) {
         ) {
             stopTimer();
         }
+
+        action(time);
     }, 1000);
 }
 
