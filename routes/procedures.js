@@ -58,6 +58,13 @@ router.post("/:name/stop", function (req, res, next) {
 });
 
 router.post("/:name/reset", function (req, res, next) {
+    if (!timer.canReset) {
+        res.status(500).json({
+            error: true,
+            message: "Timer cannot be reset.",
+        });
+        return;
+    }
     drone.setProcedure(undefined);
     resetTimer();
     res.json({ message: "Ok" });

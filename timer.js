@@ -3,7 +3,7 @@ const socket = require("./socket");
 let interval;
 
 const timer = {
-    running: false,
+    canReset: true,
     finished: false,
     current: {
         minus: false,
@@ -34,11 +34,11 @@ function increment(current) {
 }
 
 function startTimer(start, stop, action) {
-    if (timer.running) {
+    if (timer.canReset) {
         stopTimer();
     }
 
-    timer.running = true;
+    timer.canReset = false;
     timer.current = start;
     socket.io.emit("timer", timer);
     console.log("a");
@@ -52,6 +52,7 @@ function startTimer(start, stop, action) {
         ) {
             stopTimer();
             timer.finished = true;
+            timer.canReset = true;
         }
 
         socket.io.emit("timer", timer);
@@ -61,12 +62,12 @@ function startTimer(start, stop, action) {
 
 function stopTimer() {
     clearInterval(interval);
-    timer.running = false;
 }
 
 function resetTimer() {
     stopTimer();
 
+    timer.canReset = true;
     timer.finished = false;
     timer.current = {
         minus: false,
