@@ -1,8 +1,3 @@
-const drone = require("./drone");
-
-const { connect } = require("./serial");
-const { emergencyStop } = require("./drone");
-const { stopTimer } = require("./timer");
 const { commands } = require("./commands");
 
 const procedures = {

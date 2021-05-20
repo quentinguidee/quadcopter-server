@@ -5,6 +5,7 @@ var debug = require("debug")("quadcopter-server:server");
 var http = require("http");
 let socket = require("./../socket");
 var drone = require("./../drone");
+const { timer } = require("../timer");
 
 var port = normalizePort(process.env.PORT || "3001");
 app.set("port", port);
@@ -16,6 +17,8 @@ socket.io.on("connection", (socket) => {
     socket.emit("state", drone.state);
     socket.emit("leds", drone.leds);
     socket.emit("accelerometer", drone.accelerometer);
+    socket.emit("procedure", drone.procedure);
+    socket.emit("timer", timer);
 });
 
 server.listen(port);

@@ -11,6 +11,7 @@ const MOTORS_TEST = "motorstest";
 var drone = {
     // Variables
     state: DISCONNECTED,
+    procedure: undefined,
     accelerometer: DISCONNECTED,
     position: {
         x: 0,
@@ -58,6 +59,8 @@ var drone = {
     failedToSetup: () => setState(FAILED_TO_SETUP),
     inSetup: () => setState(IN_SETUP),
 
+    setProcedure: setProcedure,
+
     accelerometerOn: () => setAccelerometerState(ON),
     accelerometerDisconnected: () => setAccelerometerState(DISCONNECTED),
 
@@ -80,6 +83,11 @@ var drone = {
 function setState(state) {
     drone.state = state;
     socket.io.emit("state", drone.state);
+}
+
+function setProcedure(procedure) {
+    drone.procedure = procedure;
+    socket.io.emit("procedure", drone.procedure);
 }
 
 function setAccelerometerState(state) {

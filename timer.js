@@ -1,14 +1,16 @@
 const socket = require("./socket");
 
-let time = {
-    minus: false,
-    minutes: 0,
-    seconds: 0,
-};
-
 let interval;
 
-let running = false;
+const timer = {
+    running: false,
+    finished: false,
+    current: {
+        minus: false,
+        minutes: 2,
+        seconds: 0,
+    },
+};
 
 function increment(current) {
     const { minus, minutes, seconds } = current;
@@ -32,33 +34,34 @@ function increment(current) {
 }
 
 function startTimer(start, stop, action) {
-    if (running) {
+    if (timer.running) {
         stopTimer();
     }
 
-    running = true;
-    time = start;
-    socket.io.emit("timer", time);
+    timer.running = true;
+    timer.current = start;
+    socket.io.emit("timer", timer);
     console.log("a");
     interval = setInterval(() => {
-        time = increment(time);
-        socket.io.emit("timer", time);
+        timer.current = increment(timer.current);
+        socket.io.emit("timer", timer);
 
         if (
-            time.minus === stop.minus &&
-            time.minutes >= stop.minutes &&
-            time.seconds >= stop.seconds
+            timer.current.minus === stop.minus &&
+            timer.current.minutes >= stop.minutes &&
+            timer.current.seconds >= stop.seconds
         ) {
             stopTimer();
+            timer.finished = true;
         }
 
-        action(time);
+        action(timer.current);
     }, 1000);
 }
 
 function stopTimer() {
     clearInterval(interval);
-    running = false;
+    timer.running = false;
 }
 
-module.exports = { time, startTimer, stopTimer };
+module.exports = { timer, startTimer, stopTimer };

@@ -1,15 +1,10 @@
 var express = require("express");
 var router = express.Router();
 
-const { startTimer, stopTimer } = require("../timer");
+const { startTimer, stopTimer, timer } = require("../timer");
 const procedures = require("../procedures-list");
 const { commands } = require("../commands");
-
-/**
- * test-motors/        => Retourne la procédure
- *            /start   => Démarre la procédure
- *            /stop    => Arrête la procédure
- */
+const drone = require("../drone");
 
 router.get("/:name", function (req, res, next) {
     res.json({ message: "Ok", procedure: procedures[req.params.name] });
@@ -18,12 +13,24 @@ router.get("/:name", function (req, res, next) {
 router.post("/:name/start", function (req, res, next) {
     const procedure = procedures[req.params.name];
 
+    drone.setProcedure(req.params.name);
+
+    if (timer.running) {
+        res.status(500).json({ message: "Already running." });
+        return;
+    }
+
+    if (timer.finished) {
+        res.status(500).json({ message: "Already finished." });
+        return;
+    }
+
     startTimer(procedure.start, procedure.stop, (time) => {
         procedure.events.forEach((event) => {
             if (
-                event.time.minus === time.minus &&
-                event.time.minutes === time.minutes &&
-                event.time.seconds === time.seconds
+                event.time.minus === timer.current.minus &&
+                event.time.minutes === timer.current.minutes &&
+                event.time.seconds === timer.current.seconds
             ) {
                 event
                     .do()
