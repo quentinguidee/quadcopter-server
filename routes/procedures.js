@@ -1,49 +1,8 @@
 var express = require("express");
-const { default: fetch } = require("node-fetch");
-const { emergencyStop } = require("../drone");
-const drone = require("../drone");
-const { startTimer, stopTimer } = require("../timer");
-const { connect } = require("../serial");
 var router = express.Router();
 
-const procedures = {
-    "motors-test": {
-        start: { minus: true, minutes: 0, seconds: 20 },
-        stop: { minus: false, minutes: 0, seconds: 13 },
-        events: [
-            {
-                name: "Connect",
-                time: { minus: true, minutes: 0, seconds: 15 },
-                do: connect,
-                ifFail: stopTimer,
-            },
-            {
-                name: "Startup",
-                time: { minus: true, minutes: 0, seconds: 10 },
-                do: drone.on,
-                ifFail: stopTimer,
-            },
-            {
-                name: "Motors on",
-                time: { minus: true, minutes: 0, seconds: 0 },
-                do: drone.startMotorsTest,
-                ifFail: stopTimer,
-            },
-            {
-                name: "Motors off",
-                time: { minus: false, minutes: 0, seconds: 5 },
-                do: drone.stopMotorsTest,
-                ifFail: emergencyStop,
-            },
-            {
-                name: "Shutdown",
-                time: { minus: false, minutes: 0, seconds: 10 },
-                do: drone.off,
-                ifFail: emergencyStop,
-            },
-        ],
-    },
-};
+const { startTimer, stopTimer } = require("../timer");
+const procedures = require("../procedures-list");
 
 /**
  * test-motors/        => Retourne la procédure
