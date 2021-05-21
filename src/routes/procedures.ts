@@ -8,7 +8,7 @@ import commands from "../commands";
 import drone from "../drone";
 
 router.get("/:name", function (req, res, next) {
-    res.json({ message: "Ok", procedure: procedures[req.params.name] });
+    res.json({ message: "ok", procedure: procedures[req.params.name] });
 });
 
 router.post("/:name/start", function (req, res, next) {
@@ -50,12 +50,12 @@ router.post("/:name/start", function (req, res, next) {
         });
     });
 
-    res.json({ message: "Ok" });
+    res.json({ message: "ok" });
 });
 
 router.post("/:name/stop", function (req, res, next) {
     stopTimer();
-    res.json({ message: "Ok" });
+    res.json({ message: "ok" });
 });
 
 router.post("/:name/reset", function (req, res, next) {
@@ -68,7 +68,7 @@ router.post("/:name/reset", function (req, res, next) {
     }
     drone.setProcedure(undefined);
     resetTimer();
-    res.json({ message: "Ok" });
+    res.json({ message: "ok" });
 });
 
 export default router;
