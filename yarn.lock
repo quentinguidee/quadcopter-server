@@ -1360,6 +1360,13 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.3.tgz#7ee330ba7caafb98090bece86a5ee44115904c2c"
   integrity sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
 
+"@types/serialport@^8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@types/serialport/-/serialport-8.0.1.tgz#61dddbe74038149458edd62f9e4a323c52970f91"
+  integrity sha512-IcKHq6b/ynKSF/x4al/Ce8+a0hpbYIEaIcK9Z3l4koLvQqAPSODZ37/hgemQx8dTu7fPZDMHN4bKmu89B3UaGA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/serve-static@*":
   version "1.13.9"
   resolved "https://registry.yarnpkg.com/@types/serve-static/-/serve-static-1.13.9.tgz#aacf28a85a05ee29a11fb7c3ead935ac56f33e4e"

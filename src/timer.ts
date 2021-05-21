@@ -41,7 +41,6 @@ export function startTimer(start, stop, action) {
     timer.canReset = false;
     timer.current = start;
     socket.io.emit("timer", timer);
-    console.log("a");
     interval = setInterval(() => {
         timer.current = increment(timer.current);
 

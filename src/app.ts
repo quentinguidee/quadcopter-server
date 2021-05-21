@@ -6,7 +6,6 @@ import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
 
-import indexRouter from "./routes/index";
 import motorsRouter from "./routes/motors";
 import droneRouter from "./routes/drone";
 import proceduresRouter from "./routes/procedures";
@@ -16,13 +15,16 @@ var app = express();
 app.set("view engine", "jade");
 
 app.use(cors());
-app.use(logger("dev"));
+
+if (process.env.JEST_WORKER_ID === undefined) {
+    app.use(logger("dev"));
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter);
 app.use("/motors", motorsRouter);
 app.use("/drone/", droneRouter);
 app.use("/procedures/", proceduresRouter);

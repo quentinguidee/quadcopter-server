@@ -32,12 +32,10 @@ export function executeCommandMiddleware(command) {
     return async (req, res, next) => {
         command()
             .then((result) => {
-                console.log(result);
                 next();
             })
             .catch((err) => {
                 res.status(500).json(err);
-                console.error(err);
             });
     };
 }

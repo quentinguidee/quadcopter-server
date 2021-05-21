@@ -119,28 +119,28 @@ export function connect() {
     });
 
     return new Promise((resolve, reject) => {
-        const parser = serial.connection.pipe(new Serial.parsers.Readline());
+        const parser = serial.connection.pipe(
+            // @ts-ignore
+            new Serial.parsers.Readline()
+        );
+
         parser.on("data", (data) => {
-            console.log(data);
             handleMessage(data);
         });
 
         serial.connection.on("open", () => {
             const message = "Serial communication opened.";
-            console.log(message);
             drone.inSetup();
             resolve({ message });
         });
 
         serial.connection.on("close", (data) => {
             console.log("Serial communication closed.");
-            console.log(data);
             drone.telemetryLost();
             drone.disconnected();
         });
 
         serial.connection.on("error", (err) => {
-            console.error(err);
             reject({ error: true, message: err.message });
         });
     });
@@ -148,9 +148,13 @@ export function connect() {
 
 export function serialWrite(message) {
     return new Promise((resolve, reject) => {
+        if (!serial.connection) {
+            reject({ error: true, message: "Port not opened" });
+        }
+
         serial.connection.write(`$${message}\n`, (err) => {
             if (err) {
-                reject({ error: true });
+                reject({ error: true, message: err.message });
             }
             resolve({ message: "ok" });
         });
