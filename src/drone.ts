@@ -1,5 +1,5 @@
-let socket = require("./socket");
-const { stopTimer } = require("./timer");
+import socket from "./socket";
+import { stopTimer } from "./timer";
 
 const DISCONNECTED = "disconnected";
 const FAILED_TO_SETUP = "failed-to-setup";
@@ -8,7 +8,7 @@ const ON = "on";
 const OFF = "off";
 const MOTORS_TEST = "motorstest";
 
-var drone = {
+const drone = {
     // Variables
     state: DISCONNECTED,
     procedure: undefined,
@@ -147,4 +147,4 @@ setInterval(() => {
     socket.io.emit("angle", drone.angle);
 }, 200);
 
-module.exports = drone;
+export default drone;

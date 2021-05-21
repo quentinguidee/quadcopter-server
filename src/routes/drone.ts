@@ -1,9 +1,8 @@
-var express = require("express");
-const { drone } = require("../drone");
-const socket = require("../socket");
-const { connect, serialWrite } = require("../serial");
-const { executeCommandMiddleware: execute, commands } = require("../commands");
-var router = express.Router();
+import { Router } from "express";
+
+import commands, { executeCommandMiddleware as execute } from "../commands";
+
+var router = Router();
 
 router.post("/connect", execute(commands.connect), function (req, res, next) {
     res.json({ message: "Connected" });
@@ -33,4 +32,4 @@ router.post(
     }
 );
 
-module.exports = router;
+export default router;

@@ -1,4 +1,4 @@
-const { commands } = require("./commands");
+import commands from "./commands";
 
 const procedures = {
     "motors-test": {
@@ -39,4 +39,4 @@ const procedures = {
     },
 };
 
-module.exports = procedures;
+export default procedures;

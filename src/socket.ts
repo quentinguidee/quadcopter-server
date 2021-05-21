@@ -6,4 +6,4 @@ const socket = {
     io: io,
 };
 
-module.exports = socket;
+export default socket;

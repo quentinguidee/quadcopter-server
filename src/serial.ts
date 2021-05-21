@@ -1,8 +1,8 @@
-var Serial = require("serialport");
-const drone = require("./drone");
-const socket = require("./socket");
+import Serial from "serialport";
+import drone from "./drone";
+import socket from "./socket";
 
-var serial = {
+const serial = {
     connection: undefined,
 };
 
@@ -113,7 +113,7 @@ function handleMessage(message) {
     }
 }
 
-function connect() {
+export function connect() {
     serial.connection = new Serial("/dev/tty.usbmodem14201", {
         baudRate: 38400,
     });
@@ -126,9 +126,10 @@ function connect() {
         });
 
         serial.connection.on("open", () => {
-            console.log("Serial communication opened.");
+            const message = "Serial communication opened.";
+            console.log(message);
             drone.inSetup();
-            resolve();
+            resolve({ message });
         });
 
         serial.connection.on("close", (data) => {
@@ -145,7 +146,7 @@ function connect() {
     });
 }
 
-function serialWrite(message) {
+export function serialWrite(message) {
     return new Promise((resolve, reject) => {
         serial.connection.write(`$${message}\n`, (err) => {
             if (err) {
@@ -156,4 +157,4 @@ function serialWrite(message) {
     });
 }
 
-module.exports = { serial, connect, serialWrite };
+export default serial;

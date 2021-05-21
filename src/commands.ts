@@ -1,5 +1,5 @@
-const { serialWrite, connect: serialConnect } = require("./serial");
-const { stopTimer } = require("./timer");
+import { serialWrite, connect as serialConnect } from "./serial";
+import { stopTimer } from "./timer";
 
 const commands = {
     connect: serialConnect,
@@ -17,18 +17,18 @@ const commands = {
 function stopCountdown() {
     return new Promise((resolve) => {
         stopTimer();
-        resolve();
+        resolve("");
     });
 }
 
 function emergencyStop() {
     return new Promise((resolve) => {
         // Do emergency stop
-        resolve();
+        resolve("");
     });
 }
 
-function executeCommandMiddleware(command) {
+export function executeCommandMiddleware(command) {
     return async (req, res, next) => {
         command()
             .then((result) => {
@@ -42,4 +42,4 @@ function executeCommandMiddleware(command) {
     };
 }
 
-module.exports = { commands, executeCommandMiddleware };
+export default commands;

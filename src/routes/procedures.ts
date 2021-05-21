@@ -1,10 +1,11 @@
-var express = require("express");
-var router = express.Router();
+import { Router } from "express";
 
-const { startTimer, stopTimer, resetTimer, timer } = require("../timer");
-const procedures = require("../procedures-list");
-const { commands } = require("../commands");
-const drone = require("../drone");
+var router = Router();
+
+import timer, { startTimer, stopTimer, resetTimer } from "../timer";
+import procedures from "../procedures-list";
+import commands from "../commands";
+import drone from "../drone";
 
 router.get("/:name", function (req, res, next) {
     res.json({ message: "Ok", procedure: procedures[req.params.name] });
@@ -15,8 +16,8 @@ router.post("/:name/start", function (req, res, next) {
 
     drone.setProcedure(req.params.name);
 
-    if (timer.running) {
-        res.status(500).json({ message: "Already running." });
+    if (!timer.canReset) {
+        res.status(500).json({ message: "Cannot be start." });
         return;
     }
 
@@ -70,4 +71,4 @@ router.post("/:name/reset", function (req, res, next) {
     res.json({ message: "Ok" });
 });
 
-module.exports = router;
+export default router;

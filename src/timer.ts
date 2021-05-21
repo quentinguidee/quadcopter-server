@@ -1,4 +1,4 @@
-const socket = require("./socket");
+import socket from "./socket";
 
 let interval;
 
@@ -33,7 +33,7 @@ function increment(current) {
     return { ...current, seconds: seconds + 1 };
 }
 
-function startTimer(start, stop, action) {
+export function startTimer(start, stop, action) {
     if (timer.canReset) {
         stopTimer();
     }
@@ -60,11 +60,11 @@ function startTimer(start, stop, action) {
     }, 1000);
 }
 
-function stopTimer() {
+export function stopTimer() {
     clearInterval(interval);
 }
 
-function resetTimer() {
+export function resetTimer() {
     stopTimer();
 
     timer.canReset = true;
@@ -78,4 +78,4 @@ function resetTimer() {
     socket.io.emit("timer", timer);
 }
 
-module.exports = { timer, startTimer, stopTimer, resetTimer };
+export default timer;

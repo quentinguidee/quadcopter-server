@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
-var app = require("../app");
+import app from "../app";
+import http from "http";
+import socket from "../socket";
+import drone from "../drone";
+import timer from "../timer";
+
 var debug = require("debug")("quadcopter-server:server");
-var http = require("http");
-let socket = require("./../socket");
-var drone = require("./../drone");
-const { timer } = require("../timer");
 
 var port = normalizePort(process.env.PORT || "3001");
 app.set("port", port);

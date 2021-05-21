@@ -1,18 +1,18 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-var cors = require("cors");
+import express from "express";
 
-var indexRouter = require("./routes/index");
-var motorsRouter = require("./routes/motors");
-var droneRouter = require("./routes/drone");
-var proceduresRouter = require("./routes/procedures");
+import createError from "http-errors";
+import path from "path";
+import cookieParser from "cookie-parser";
+import logger from "morgan";
+import cors from "cors";
+
+import indexRouter from "./routes/index";
+import motorsRouter from "./routes/motors";
+import droneRouter from "./routes/drone";
+import proceduresRouter from "./routes/procedures";
 
 var app = express();
 
-app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
 app.use(cors());
@@ -39,4 +39,4 @@ app.use(function (err, req, res, next) {
     res.render("error");
 });
 
-module.exports = app;
+export default app;
