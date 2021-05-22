@@ -148,7 +148,7 @@ export class Drone {
 
     emergencyStop() {
         console.log("Emergency Stop.");
-        timer.stop();
+        timer.stop(true);
     }
 }
 

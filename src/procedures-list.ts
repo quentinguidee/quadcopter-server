@@ -9,19 +9,19 @@ const procedures = {
                 name: "Connect",
                 time: { minus: true, minutes: 0, seconds: 10 },
                 do: commands.connect,
-                ifFail: commands.stopCountdown,
+                ifFail: commands.forceStopCountdown,
             },
             {
                 name: "Startup",
                 time: { minus: true, minutes: 0, seconds: 5 },
                 do: commands.on,
-                ifFail: commands.stopCountdown,
+                ifFail: commands.forceStopCountdown,
             },
             {
                 name: "Motors on",
                 time: { minus: true, minutes: 0, seconds: 0 },
                 do: commands.startMotorsTest,
-                ifFail: commands.stopCountdown,
+                ifFail: commands.forceStopCountdown,
             },
             {
                 name: "Motors off",

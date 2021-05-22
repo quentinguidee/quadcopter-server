@@ -11,6 +11,7 @@ export class Timer {
 
     canReset = true;
     finished = false;
+    forceStopped = false;
 
     interval = undefined;
 
@@ -40,6 +41,7 @@ export class Timer {
             canReset: this.canReset,
             finished: this.finished,
             current: this.current,
+            forceStopped: this.forceStopped,
         };
     }
 
@@ -68,8 +70,12 @@ export class Timer {
         }, 1000);
     }
 
-    stop() {
+    stop(force: boolean = false) {
         clearInterval(this.interval);
+        this.canReset = true;
+        this.forceStopped = force;
+
+        this.emit();
     }
 
     reset(time: ITime = { minus: true, minutes: 2, seconds: 0 }) {
@@ -78,6 +84,7 @@ export class Timer {
         this.canReset = true;
         this.finished = false;
         this.current = time;
+        this.forceStopped = false;
 
         this.emit();
     }

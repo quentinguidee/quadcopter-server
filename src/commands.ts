@@ -4,7 +4,7 @@ import timer from "./timer";
 const commands = {
     connect: serialConnect,
 
-    stopCountdown: stopCountdown,
+    forceStopCountdown: forceStopCountdown,
 
     emergencyStop: emergencyStop,
 
@@ -14,9 +14,9 @@ const commands = {
     stopMotorsTest: () => serialWrite("D5"),
 };
 
-function stopCountdown() {
+function forceStopCountdown() {
     return new Promise((resolve) => {
-        timer.stop();
+        timer.stop(true);
         resolve("");
     });
 }
