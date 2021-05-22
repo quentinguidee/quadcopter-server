@@ -8,7 +8,13 @@ import commands from "../commands";
 import drone from "../drone";
 
 router.get("/:name", function (req, res, next) {
-    res.json({ message: "ok", procedure: procedures[req.params.name] });
+    const procedure = procedures[req.params.name];
+
+    if (procedure === undefined) {
+        res.status(500).json({ error: true, message: "Procedure not found" });
+    }
+
+    res.json({ message: "ok", procedure });
 });
 
 router.post("/:name/start", function (req, res, next) {
