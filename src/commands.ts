@@ -1,8 +1,9 @@
-import { serialWrite, connect as serialConnect } from "./serial";
+import serial, { serialWrite, connect as serialConnect } from "./serial";
 import timer from "./timer";
 
 const commands = {
-    connect: serialConnect,
+    connect: connect,
+    connectIfNotConnected: () => connect(false),
 
     forceStopCountdown: forceStopCountdown,
 
@@ -25,6 +26,16 @@ function emergencyStop() {
     return new Promise((resolve) => {
         // Do emergency stop
         resolve("");
+    });
+}
+
+function connect(rejectIfAlreadyConnected: boolean = true) {
+    if (serial.connection === undefined || rejectIfAlreadyConnected) {
+        return serialConnect();
+    }
+
+    return new Promise((resolve) => {
+        resolve({ message: "Serial communication already opened" });
     });
 }
 

@@ -8,7 +8,7 @@ const procedures = {
             {
                 name: "Connect",
                 time: { minus: true, minutes: 0, seconds: 10 },
-                do: commands.connect,
+                do: commands.connectIfNotConnected,
                 ifFail: commands.forceStopCountdown,
             },
             {
