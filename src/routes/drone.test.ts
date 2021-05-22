@@ -150,3 +150,85 @@ describe("POST /drone/off", () => {
             });
     });
 });
+
+describe("POST /motorstest/on", () => {
+    it("should start motorstest", () => {
+        plugUSB();
+        connectUSB();
+        return request(app)
+            .post("/drone/motorstest/on")
+            .expect(200)
+            .expect("Content-Type", /json/)
+            .then((res) => {
+                const { error, message } = res.body;
+                expect(error).toBeUndefined();
+                expect(message).toBe("Send start motors test command");
+            });
+    });
+
+    it("should fail because not plugged in", () => {
+        return request(app)
+            .post("/drone/motorstest/on")
+            .expect(500)
+            .expect("Content-Type", /json/)
+            .then((res) => {
+                const { error, message } = res.body;
+                expect(error).toBeTruthy();
+                expect(message).toBe("Port not opened");
+            });
+    });
+
+    it("should fail because not connected", () => {
+        plugUSB();
+        return request(app)
+            .post("/drone/motorstest/on")
+            .expect(500)
+            .expect("Content-Type", /json/)
+            .then((res) => {
+                const { error, message } = res.body;
+                expect(error).toBeTruthy();
+                expect(message).toBe("Port not opened");
+            });
+    });
+});
+
+describe("POST /motorstest/off", () => {
+    it("should start motorstest", () => {
+        plugUSB();
+        connectUSB();
+        return request(app)
+            .post("/drone/motorstest/off")
+            .expect(200)
+            .expect("Content-Type", /json/)
+            .then((res) => {
+                const { error, message } = res.body;
+                expect(error).toBeUndefined();
+                expect(message).toBe("Send stop motors test command");
+            });
+    });
+
+    it("should fail because not plugged in", () => {
+        return request(app)
+            .post("/drone/motorstest/off")
+            .expect(500)
+            .expect("Content-Type", /json/)
+            .then((res) => {
+                const { error, message } = res.body;
+                expect(error).toBeTruthy();
+                expect(message).toBe("Port not opened");
+            });
+    });
+
+    it("should fail because not connected", () => {
+        plugUSB();
+        return request(app)
+            .post("/drone/motorstest/off")
+            .expect(500)
+            .expect("Content-Type", /json/)
+            .then((res) => {
+                const { error, message } = res.body;
+                expect(error).toBeTruthy();
+                expect(message).toBe("Port not opened");
+            });
+    });
+});
