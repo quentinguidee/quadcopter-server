@@ -6,7 +6,6 @@ import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
 
-import motorsRouter from "./routes/motors";
 import droneRouter from "./routes/drone";
 import proceduresRouter from "./routes/procedures";
 
@@ -25,7 +24,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/motors", motorsRouter);
 app.use("/drone/", droneRouter);
 app.use("/procedures/", proceduresRouter);
 
