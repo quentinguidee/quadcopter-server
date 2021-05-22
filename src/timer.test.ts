@@ -1,7 +1,7 @@
 import timer, { ITime } from "./timer";
 
 describe("Test increments", () => {
-    const matrix: [{ initial: ITime; incremented: ITime }] = [
+    const matrix: { initial: ITime; incremented: ITime }[] = [
         {
             initial: { minus: true, minutes: 1, seconds: 30 },
             incremented: { minus: true, minutes: 1, seconds: 29 },
