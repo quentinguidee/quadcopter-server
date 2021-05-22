@@ -81,6 +81,10 @@ describe("POST /drone/on", () => {
                 const { error, message } = res.body;
                 expect(error).toBeUndefined();
                 expect(message).toBe("Send startup command");
+
+                expect(serial.connection.binding.lastWrite).toStrictEqual(
+                    Buffer.from("$D1\n")
+                );
             });
     });
 
@@ -122,6 +126,10 @@ describe("POST /drone/off", () => {
                 const { error, message } = res.body;
                 expect(error).toBeUndefined();
                 expect(message).toBe("Send shutdown command");
+
+                expect(serial.connection.binding.lastWrite).toStrictEqual(
+                    Buffer.from("$D0\n")
+                );
             });
     });
 
@@ -163,6 +171,10 @@ describe("POST /motorstest/on", () => {
                 const { error, message } = res.body;
                 expect(error).toBeUndefined();
                 expect(message).toBe("Send start motors test command");
+
+                expect(serial.connection.binding.lastWrite).toStrictEqual(
+                    Buffer.from("$D4\n")
+                );
             });
     });
 
@@ -204,6 +216,10 @@ describe("POST /motorstest/off", () => {
                 const { error, message } = res.body;
                 expect(error).toBeUndefined();
                 expect(message).toBe("Send stop motors test command");
+
+                expect(serial.connection.binding.lastWrite).toStrictEqual(
+                    Buffer.from("$D5\n")
+                );
             });
     });
 
