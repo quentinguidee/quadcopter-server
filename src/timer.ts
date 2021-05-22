@@ -1,80 +1,92 @@
 import socket from "./socket";
 
-let interval;
-
-const timer = {
-    canReset: true,
-    finished: false,
-    current: {
-        minus: false,
-        minutes: 2,
-        seconds: 0,
-    },
-};
-
-function increment(current) {
-    const { minus, minutes, seconds } = current;
-
-    if (minutes === 0 && seconds === 0) {
-        return { ...current, minus: false, seconds: 1 };
-    }
-
-    if (minus) {
-        if (seconds === 0) {
-            return { ...current, minutes: minutes - 1, seconds: 59 };
-        }
-        return { ...current, seconds: seconds - 1 };
-    }
-
-    if (seconds === 59) {
-        return { ...current, minutes: minutes + 1, seconds: 0 };
-    }
-
-    return { ...current, seconds: seconds + 1 };
+export interface ITime {
+    minus: boolean;
+    minutes: number;
+    seconds: number;
 }
 
-export function startTimer(start, stop, action) {
-    if (timer.canReset) {
-        stopTimer();
-    }
+export class Timer {
+    current: ITime;
 
-    timer.canReset = false;
-    timer.current = start;
-    socket.io.emit("timer", timer);
-    interval = setInterval(() => {
-        timer.current = increment(timer.current);
+    canReset = true;
+    finished = false;
 
-        if (
-            timer.current.minus === stop.minus &&
-            timer.current.minutes >= stop.minutes &&
-            timer.current.seconds >= stop.seconds
-        ) {
-            stopTimer();
-            timer.finished = true;
-            timer.canReset = true;
+    interval = undefined;
+
+    incremented() {
+        const { minus, minutes, seconds } = this.current;
+
+        if (minutes === 0 && seconds === 0) {
+            return { ...this.current, minus: false, seconds: 1 };
         }
 
-        socket.io.emit("timer", timer);
-        action(timer.current);
-    }, 1000);
+        if (minus) {
+            if (seconds === 0) {
+                return { ...this.current, minutes: minutes - 1, seconds: 59 };
+            }
+            return { ...this.current, seconds: seconds - 1 };
+        }
+
+        if (seconds === 59) {
+            return { ...this.current, minutes: minutes + 1, seconds: 0 };
+        }
+
+        return { ...this.current, seconds: seconds + 1 };
+    }
+
+    getCurrentState() {
+        return {
+            canReset: this.canReset,
+            finished: this.finished,
+            current: this.current,
+        };
+    }
+
+    start(until?: ITime, onTick?: (current) => void) {
+        this.canReset = false;
+
+        this.emit();
+
+        this.interval = setInterval(() => {
+            this.current = this.incremented();
+
+            if (
+                until &&
+                this.current.minus === until.minus &&
+                this.current.minutes >= until.minutes &&
+                this.current.seconds >= until.seconds
+            ) {
+                this.stop();
+                this.finished = true;
+                this.canReset = true;
+            }
+
+            this.emit();
+
+            onTick(this.current);
+        }, 1000);
+    }
+
+    stop() {
+        clearInterval(this.interval);
+    }
+
+    reset(time: ITime = { minus: true, minutes: 2, seconds: 0 }) {
+        this.stop();
+
+        this.canReset = true;
+        this.finished = false;
+        this.current = time;
+
+        this.emit();
+    }
+
+    emit() {
+        socket.io.emit("timer", this.getCurrentState());
+    }
 }
 
-export function stopTimer() {
-    clearInterval(interval);
-}
-
-export function resetTimer() {
-    stopTimer();
-
-    timer.canReset = true;
-    timer.finished = false;
-    timer.current = {
-        minus: false,
-        minutes: 2,
-        seconds: 0,
-    };
-
-    socket.io.emit("timer", timer);
-}
+const timer = new Timer();
 
 export default timer;

@@ -2,7 +2,7 @@ import { Router } from "express";
 
 var router = Router();
 
-import timer, { startTimer, stopTimer, resetTimer } from "../timer";
+import timer from "../timer";
 import procedures from "../procedures-list";
 import commands from "../commands";
 import drone from "../drone";
@@ -32,7 +32,8 @@ router.post("/:name/start", function (req, res, next) {
         return;
     }
 
-    startTimer(procedure.start, procedure.stop, (time) => {
+    timer.reset(procedure.start);
+    timer.start(procedure.stop, (time) => {
         procedure.events.forEach((event) => {
             if (
                 event.time.minus === timer.current.minus &&
@@ -60,7 +61,7 @@ router.post("/:name/start", function (req, res, next) {
 });
 
 router.post("/:name/stop", function (req, res, next) {
-    stopTimer();
+    timer.stop();
     res.json({ message: "ok" });
 });
 
@@ -72,8 +73,9 @@ router.post("/:name/reset", function (req, res, next) {
         });
         return;
     }
+
     drone.setProcedure(undefined);
-    resetTimer();
+    timer.reset();
     res.json({ message: "ok" });
 });
 

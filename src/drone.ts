@@ -1,5 +1,5 @@
 import socket from "./socket";
-import { stopTimer } from "./timer";
+import timer from "./timer";
 
 const DISCONNECTED = "disconnected";
 const FAILED_TO_SETUP = "failed-to-setup";
@@ -138,7 +138,7 @@ function telemetryLost() {
 function emergencyStop() {
     console.log("Emergency Stop.");
 
-    stopTimer();
+    timer.stop();
 }
 
 setInterval(() => {

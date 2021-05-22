@@ -1,5 +1,5 @@
 import { serialWrite, connect as serialConnect } from "./serial";
-import { stopTimer } from "./timer";
+import timer from "./timer";
 
 const commands = {
     connect: serialConnect,
@@ -16,7 +16,7 @@ const commands = {
 
 function stopCountdown() {
     return new Promise((resolve) => {
-        stopTimer();
+        timer.stop();
         resolve("");
     });
 }

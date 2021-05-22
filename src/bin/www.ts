@@ -19,7 +19,7 @@ socket.io.on("connection", (socket) => {
     socket.emit("leds", drone.leds);
     socket.emit("accelerometer", drone.accelerometer);
     socket.emit("procedure", drone.procedure);
-    socket.emit("timer", timer);
+    socket.emit("timer", timer.getCurrentState());
 });
 
 server.listen(port);

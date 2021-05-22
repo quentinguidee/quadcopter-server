@@ -1,5 +1,10 @@
+import timer from "../timer";
 import request from "supertest";
 import app from "../app";
+
+beforeEach(() => {
+    timer.reset({ minus: true, minutes: 1, seconds: 0 });
+});
 
 describe("GET /procedures/motors-test", () => {
     it("should get the motors test procedure", () => {
@@ -59,7 +64,7 @@ describe("POST /procedures/motors-test/reset", () => {
     it("should reset the motors test procedure", () => {
         return request(app)
             .post("/procedures/motors-test/reset")
-            .expect(500)
+            .expect(200)
             .expect("Content-Type", /json/);
     });
 });
