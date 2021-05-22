@@ -1,145 +1,158 @@
 import socket from "./socket";
 import timer from "./timer";
 
-const DISCONNECTED = "disconnected";
-const FAILED_TO_SETUP = "failed-to-setup";
-const IN_SETUP = "in-setup";
-const ON = "on";
-const OFF = "off";
-const MOTORS_TEST = "motorstest";
+type State =
+    | "disconnected"
+    | "failed-to-setup"
+    | "in-setup"
+    | "on"
+    | "off"
+    | "motorstest";
 
-const drone = {
-    // Variables
-    state: DISCONNECTED,
-    procedure: undefined,
-    accelerometer: DISCONNECTED,
-    position: {
-        x: 0,
-        y: 0,
-        z: 0,
-    },
-    angle: {
-        x: 0,
-        y: 0,
-        z: 0,
-    },
-    leds: {
-        led1: DISCONNECTED,
-        led2: DISCONNECTED,
-        led3: DISCONNECTED,
-        led4: DISCONNECTED,
-    },
-    motors: {
+type Accelerometer = "disconnected" | "on";
+type Coordinate = { x: number; y: number; z: number };
+type Led = "disconnected" | "on" | "off";
+type MotorState = "disconnected" | "on" | "off" | "failed-to-setup";
+type Procedure = string;
+
+type Leds = {
+    led1: Led;
+    led2: Led;
+    led3: Led;
+    led4: Led;
+};
+
+type Motor = {
+    state: MotorState;
+    speed: number;
+};
+
+type Motors = {
+    motor1: Motor;
+    motor2: Motor;
+    motor3: Motor;
+    motor4: Motor;
+};
+
+export class Drone {
+    state: State = "disconnected";
+    procedure: Procedure = undefined;
+    accelerometer: Accelerometer = "disconnected";
+    position: Coordinate = { x: 0, y: 0, z: 0 };
+    angle: Coordinate = { x: 0, y: 0, z: 0 };
+    leds: Leds = {
+        led1: "disconnected",
+        led2: "disconnected",
+        led3: "disconnected",
+        led4: "disconnected",
+    };
+    motors: Motors = {
         motor1: {
-            state: DISCONNECTED,
+            state: "disconnected",
             speed: undefined,
         },
         motor2: {
-            state: DISCONNECTED,
+            state: "disconnected",
             speed: undefined,
         },
         motor3: {
-            state: DISCONNECTED,
+            state: "disconnected",
             speed: undefined,
         },
         motor4: {
-            state: DISCONNECTED,
+            state: "disconnected",
             speed: undefined,
         },
-    },
+    };
 
-    // Methods
-    telemetryLost: telemetryLost,
+    telemetryLost() {
+        this.reset();
+    }
 
-    on: () => setState(ON),
-    off: () => setState(OFF),
-    disconnected: () => setState(DISCONNECTED),
-    startMotorsTest: () => setState(MOTORS_TEST),
-    stopMotorsTest: () => setState(ON),
-    failedToSetup: () => setState(FAILED_TO_SETUP),
-    inSetup: () => setState(IN_SETUP),
+    reset() {
+        this.disconnected();
+        this.setAccelerometerState("disconnected");
+        this.setPosition({ x: 0, y: 0, z: 0 });
+        this.setAngle({ x: 0, y: 0, z: 0 });
+        this.ledDisconnected(1);
+        this.ledDisconnected(2);
+        this.ledDisconnected(3);
+        this.ledDisconnected(4);
+        this.motorDisconnected(1);
+        this.motorDisconnected(2);
+        this.motorDisconnected(3);
+        this.motorDisconnected(4);
+    }
 
-    setProcedure: setProcedure,
+    on = () => this.setState("on");
+    off = () => this.setState("off");
+    disconnected = () => this.setState("disconnected");
+    startMotorsTest = () => this.setState("motorstest");
+    stopMotorsTest = () => this.setState("on");
+    failedToSetup = () => this.setState("failed-to-setup");
+    inSetup = () => this.setState("in-setup");
 
-    accelerometerOn: () => setAccelerometerState(ON),
-    accelerometerDisconnected: () => setAccelerometerState(DISCONNECTED),
+    setState(state: State) {
+        this.state = state;
+        socket.io.emit("state", this.state);
+    }
 
-    setPosition: setPosition,
-    setAngle: setAngle,
+    setProcedure(procedure: Procedure) {
+        this.procedure = procedure;
+        socket.io.emit("procedure", this.procedure);
+    }
 
-    ledOn: (id) => setLedState(id, ON),
-    ledOff: (id) => setLedState(id, OFF),
-    ledDisconnected: (id) => setLedState(id, DISCONNECTED),
+    accelerometerOn = () => this.setAccelerometerState("on");
+    accelerometerDisconnected = () =>
+        this.setAccelerometerState("disconnected");
 
-    motorOn: (id) => setMotorState(id, ON),
-    motorOff: (id) => setMotorState(id, OFF),
-    motorDisconnected: (id) => setMotorState(id, DISCONNECTED),
-    motorFailedToSetup: (id) => setMotorState(id, FAILED_TO_SETUP),
-    motorSpeedChanged: (id, speed) => setMotorSpeed(id, speed),
+    setAccelerometerState(state: Accelerometer) {
+        this.accelerometer = state;
+        socket.io.emit("accelerometer", this.accelerometer);
+    }
 
-    emergencyStop: () => emergencyStop(),
-};
+    setPosition(position: Coordinate) {
+        this.position = position;
+    }
 
-function setState(state) {
-    drone.state = state;
-    socket.io.emit("state", drone.state);
-}
+    setAngle(angle: Coordinate) {
+        this.angle = angle;
+    }
 
-function setProcedure(procedure) {
-    drone.procedure = procedure;
-    socket.io.emit("procedure", drone.procedure);
-}
+    ledOn = (id: number) => this.setLedState(id, "on");
+    ledOff = (id: number) => this.setLedState(id, "off");
+    ledDisconnected = (id: number) => this.setLedState(id, "disconnected");
 
-function setAccelerometerState(state) {
-    drone.accelerometer = state;
-    socket.io.emit("accelerometer", drone.accelerometer);
-}
+    setLedState(id: number, state: Led) {
+        this.leds[`led${id}`] = state;
+        socket.io.emit("leds", this.leds);
+    }
 
-function setPosition(position) {
-    drone.position = position;
-}
+    motorOn = (id: number) => this.setMotorState(id, "on");
+    motorOff = (id: number) => this.setMotorState(id, "off");
+    motorDisconnected = (id: number) => this.setMotorState(id, "disconnected");
+    motorFailedToSetup = (id: number) =>
+        this.setMotorState(id, "failed-to-setup");
 
-function setAngle(angle) {
-    drone.angle = angle;
-}
+    setMotorState(id: number, state: MotorState) {
+        const motor = this.motors[`motor${id}`];
+        motor.state = state;
+        if (state === "disconnected" || state === "off") {
+            motor.speed = undefined;
+        }
+    }
 
-function setLedState(id, state) {
-    drone.leds[`led${id}`] = state;
-    socket.io.emit("leds", drone.leds);
-}
+    setMotorSpeed(id: number, speed: number) {
+        this.motors[`motor${id}`].speed = speed;
+    }
 
-function setMotorState(id, state) {
-    const motor = drone.motors[`motor${id}`];
-    motor.state = state;
-    if (state === "disconnected" || state === "off") {
-        motor.speed = undefined;
+    emergencyStop() {
+        console.log("Emergency Stop.");
+        timer.stop();
     }
 }
 
-function setMotorSpeed(id, speed) {
-    drone.motors[`motor${id}`].speed = speed;
-}
-
-function telemetryLost() {
-    drone.disconnected();
-    setAccelerometerState(DISCONNECTED);
-    drone.setPosition({ x: 0, y: 0, z: 0 });
-    drone.setAngle({ x: 0, y: 0, z: 0 });
-    drone.ledDisconnected(1);
-    drone.ledDisconnected(2);
-    drone.ledDisconnected(3);
-    drone.ledDisconnected(4);
-    drone.motorDisconnected(1);
-    drone.motorDisconnected(2);
-    drone.motorDisconnected(3);
-    drone.motorDisconnected(4);
-}
-
-function emergencyStop() {
-    console.log("Emergency Stop.");
-
-    timer.stop();
-}
+const drone: Drone = new Drone();
 
 setInterval(() => {
     socket.io.emit("motors", drone.motors);

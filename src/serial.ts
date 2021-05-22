@@ -62,7 +62,7 @@ function handleMessage(message) {
         if (message[3] === "S") {
             // Motor speed changed
             const speed = message.substring(4);
-            drone.motorSpeedChanged(motor, Number.parseInt(speed));
+            drone.setMotorSpeed(motor, Number.parseInt(speed));
             return;
         }
 
