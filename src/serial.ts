@@ -136,11 +136,13 @@ export function connect() {
 
         serial.connection.on("close", (data) => {
             console.log("Serial communication closed.");
+            serial.connection = undefined;
             drone.telemetryLost();
             drone.disconnected();
         });
 
         serial.connection.on("error", (err) => {
+            serial.connection = undefined;
             reject({ error: true, message: err.message });
         });
     });
