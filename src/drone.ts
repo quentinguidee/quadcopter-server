@@ -38,8 +38,16 @@ export class Drone {
     state: State = "disconnected";
     procedure: Procedure = undefined;
     accelerometer: Accelerometer = "disconnected";
-    position: Coordinate = { x: 0, y: 0, z: 0 };
-    angle: Coordinate = { x: 0, y: 0, z: 0 };
+    position: Coordinate = {
+        x: undefined,
+        y: undefined,
+        z: undefined,
+    };
+    angle: Coordinate = {
+        x: undefined,
+        y: undefined,
+        z: undefined,
+    };
     leds: Leds = {
         led1: "disconnected",
         led2: "disconnected",
