@@ -11,6 +11,8 @@ const commands = {
 
     off: () => serialWrite("D0"),
     on: () => serialWrite("D1"),
+    liftoff: () => serialWrite("D2"),
+    landing: () => serialWrite("D3"),
     startMotorsTest: () => serialWrite("D4"),
     stopMotorsTest: () => serialWrite("D5"),
 };

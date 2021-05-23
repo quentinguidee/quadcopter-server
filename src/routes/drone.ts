@@ -16,6 +16,14 @@ router.post("/on", execute(commands.on), function (req, res, next) {
     res.json({ message: "Send startup command" });
 });
 
+router.post("/liftoff", execute(commands.liftoff), function (req, res, next) {
+    res.json({ message: "Send liftoff command" });
+});
+
+router.post("/landing", execute(commands.landing), function (req, res, next) {
+    res.json({ message: "Send landing command" });
+});
+
 router.post(
     "/motorstest/on",
     execute(commands.startMotorsTest),

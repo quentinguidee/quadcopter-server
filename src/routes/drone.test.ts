@@ -159,6 +159,96 @@ describe("POST /drone/off", () => {
     });
 });
 
+describe("POST /drone/liftoff", () => {
+    it("should liftoff", () => {
+        plugUSB();
+        connectUSB();
+        return request(app)
+            .post("/drone/liftoff")
+            .expect(200)
+            .expect("Content-Type", /json/)
+            .then((res) => {
+                const { error, message } = res.body;
+                expect(error).toBeUndefined();
+                expect(message).toBe("Send liftoff command");
+
+                expect(serial.connection.binding.lastWrite).toStrictEqual(
+                    Buffer.from("$D2\n")
+                );
+            });
+    });
+
+    it("should fail because not plugged in", () => {
+        return request(app)
+            .post("/drone/liftoff")
+            .expect(500)
+            .expect("Content-Type", /json/)
+            .then((res) => {
+                const { error, message } = res.body;
+                expect(error).toBeTruthy();
+                expect(message).toBe("Port not opened");
+            });
+    });
+
+    it("should fail because not connected", () => {
+        plugUSB();
+        return request(app)
+            .post("/drone/liftoff")
+            .expect(500)
+            .expect("Content-Type", /json/)
+            .then((res) => {
+                const { error, message } = res.body;
+                expect(error).toBeTruthy();
+                expect(message).toBe("Port not opened");
+            });
+    });
+});
+
+describe("POST /drone/landing", () => {
+    it("should turn off", () => {
+        plugUSB();
+        connectUSB();
+        return request(app)
+            .post("/drone/landing")
+            .expect(200)
+            .expect("Content-Type", /json/)
+            .then((res) => {
+                const { error, message } = res.body;
+                expect(error).toBeUndefined();
+                expect(message).toBe("Send landing command");
+
+                expect(serial.connection.binding.lastWrite).toStrictEqual(
+                    Buffer.from("$D3\n")
+                );
+            });
+    });
+
+    it("should fail because not plugged in", () => {
+        return request(app)
+            .post("/drone/landing")
+            .expect(500)
+            .expect("Content-Type", /json/)
+            .then((res) => {
+                const { error, message } = res.body;
+                expect(error).toBeTruthy();
+                expect(message).toBe("Port not opened");
+            });
+    });
+
+    it("should fail because not connected", () => {
+        plugUSB();
+        return request(app)
+            .post("/drone/landing")
+            .expect(500)
+            .expect("Content-Type", /json/)
+            .then((res) => {
+                const { error, message } = res.body;
+                expect(error).toBeTruthy();
+                expect(message).toBe("Port not opened");
+            });
+    });
+});
+
 describe("POST /motorstest/on", () => {
     it("should start motorstest", () => {
         plugUSB();
