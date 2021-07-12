@@ -15,6 +15,7 @@
         "jade": "~1.11.0",
         "morgan": "~1.9.1",
         "node-fetch": "^2.6.1",
+        "redis": "^3.1.2",
         "serialport": "^9.0.7",
         "socket.io": "^4.0.2"
     },
@@ -25,6 +26,7 @@
         "@types/express": "^4.17.11",
         "@types/jest": "^26.0.23",
         "@types/node": "^15.6.0",
+        "@types/redis": "^2.8.30",
         "@types/serialport": "^8.0.1",
         "@types/supertest": "^2.0.11",
         "babel-jest": "^26.6.3",

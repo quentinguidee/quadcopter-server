@@ -3,7 +3,7 @@
 import app from "../app";
 import http from "http";
 import socket from "../socket";
-import drone from "../drone";
+import drone from "../database/drone";
 import timer from "../timer";
 
 var debug = require("debug")("quadcopter-server:server");
@@ -15,10 +15,18 @@ var server = http.createServer(app);
 socket.io.attach(server);
 socket.io.on("connection", (socket) => {
     console.log("Client connected");
-    socket.emit("state", drone.state);
-    socket.emit("leds", drone.leds);
-    socket.emit("accelerometer", drone.accelerometer);
-    socket.emit("procedure", drone.procedure);
+
+    drone.state.get().then((state) => socket.emit("state", state));
+    drone.leds.get().then((leds) => socket.emit("leds", leds));
+
+    drone.accelerometer
+        .get()
+        .then((accelerometer) => socket.emit("accelerometer", accelerometer));
+
+    drone.procedure
+        .get()
+        .then((procedure) => socket.emit("procedure", procedure));
+
     socket.emit("timer", timer.getCurrentState());
 });
 

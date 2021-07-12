@@ -4,7 +4,6 @@ import app from "../app";
 import Serial from "@serialport/stream";
 import MockBinding from "@serialport/binding-mock";
 import serial from "../serial";
-import drone from "../drone";
 
 Serial.Binding = MockBinding;
 

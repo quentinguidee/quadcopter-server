@@ -1,5 +1,5 @@
 import Serial from "serialport";
-import drone from "./drone";
+import drone from "./database/drone";
 import socket from "./socket";
 
 const serial = {
@@ -90,13 +90,15 @@ function handleMessage(message) {
 
         if (command === "P") {
             // Position
-            drone.setPosition(parseCoordinates(message));
+            const pos = parseCoordinates(message);
+            drone.setPosition(pos.x, pos.y, pos.z);
             return;
         }
 
         if (command === "A") {
             // Angle
-            drone.setAngle(parseCoordinates(message));
+            const angle = parseCoordinates(message);
+            drone.setAngle(angle.x, angle.y, angle.z);
             return;
         }
 

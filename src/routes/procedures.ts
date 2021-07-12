@@ -5,7 +5,7 @@ var router = Router();
 import timer from "../timer";
 import procedures from "../procedures-list";
 import commands from "../commands";
-import drone from "../drone";
+import drone from "../database/drone";
 
 router.get("/:name", function (req, res, next) {
     const procedure = procedures[req.params.name];
