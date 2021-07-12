@@ -12,22 +12,17 @@ var port = normalizePort(process.env.PORT || "3001");
 app.set("port", port);
 
 var server = http.createServer(app);
+
 socket.io.attach(server);
-socket.io.on("connection", (socket) => {
+socket.io.on("connection", (_: any) => {
     console.log("Client connected");
 
-    drone.state.get().then((state) => socket.emit("state", state));
-    drone.leds.get().then((leds) => socket.emit("leds", leds));
+    socket.emit(drone.state);
+    socket.emit(drone.leds);
+    socket.emit(drone.accelerometer);
+    socket.emit(drone.procedure);
 
-    drone.accelerometer
-        .get()
-        .then((accelerometer) => socket.emit("accelerometer", accelerometer));
-
-    drone.procedure
-        .get()
-        .then((procedure) => socket.emit("procedure", procedure));
-
-    socket.emit("timer", timer.getCurrentState());
+    timer.emit();
 });
 
 server.listen(port);

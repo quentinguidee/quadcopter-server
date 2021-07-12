@@ -10,7 +10,7 @@ import drone from "../database/drone";
 router.get("/:name", function (req, res, next) {
     const procedure = procedures[req.params.name];
 
-    if (procedure === undefined) {
+    if (!procedure) {
         res.status(500).json({ error: true, message: "Procedure not found" });
     }
 

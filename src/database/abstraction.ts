@@ -5,11 +5,10 @@ export class Value<T> {
         if (defaultValue) this.set(defaultValue);
     }
 
-    public get(): Promise<T> {
-        return new Promise<T>((resolve, reject) => {
+    public get(): Promise<[T, Error]> {
+        return new Promise((resolve) => {
             database.GET(this.key, (err, res: any) => {
-                if (err) return reject(err);
-                return resolve(res as T);
+                resolve([res, err]);
             });
         });
     }
@@ -28,11 +27,10 @@ export class HashValue<T> extends Value<T> {
         if (defaultValue) this.set(defaultValue);
     }
 
-    public get(): Promise<T> {
-        return new Promise((resolve, reject) => {
+    public get(): Promise<[T, Error]> {
+        return new Promise((resolve) => {
             database.HGET(this.parentKey, this.key, (err, res: any) => {
-                if (err) return reject(err);
-                return resolve(res);
+                resolve([res, err]);
             });
         });
     }
@@ -52,10 +50,9 @@ export class HashParent extends Value<any> {
     }
 
     public get(): Promise<any> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             database.HGETALL(this.key, (err, res: any) => {
-                if (err) return reject(err);
-                return resolve(res);
+                resolve([res, err]);
             });
         });
     }

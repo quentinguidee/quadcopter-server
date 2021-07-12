@@ -106,9 +106,7 @@ class Drone {
 
     setAccelerometerState(state: Accelerometer) {
         this.accelerometer.set(state).then(() => {
-            this.accelerometer
-                .get()
-                .then((res) => socket.io.emit("accelerometer", res));
+            socket.emit(this.accelerometer);
         });
     }
 
@@ -128,9 +126,22 @@ class Drone {
     ledOff = (id: number) => this.setLedState(id, "off");
     ledDisconnected = (id: number) => this.setLedState(id, "disconnected");
 
-    setLedState(id: number, state: Led) {
-        this.leds[`led${id}`] = state;
-        this.leds.get().then((leds) => socket.io.emit("leds", leds));
+    async setLedState(id: number, state: Led) {
+        switch (id) {
+            case 1:
+                await this.leds.led1.set(state);
+                break;
+            case 2:
+                await this.leds.led2.set(state);
+                break;
+            case 3:
+                await this.leds.led3.set(state);
+                break;
+            case 4:
+                await this.leds.led4.set(state);
+                break;
+        }
+        await socket.emit(drone.leds);
     }
 
     motorOn = (id: number) => this.setMotorState(id, "on");
@@ -187,16 +198,10 @@ class Drone {
 const drone = new Drone();
 
 setInterval(() => {
-    drone.motorsStates
-        .get()
-        .then((states) => socket.io.emit("motors_states", states));
-    drone.motorsSpeeds
-        .get()
-        .then((speeds) => socket.io.emit("motors_speeds", speeds));
-    drone.position
-        .get()
-        .then((position) => socket.io.emit("position", position));
-    drone.angle.get().then((angle) => socket.io.emit("angle", angle));
+    socket.emit(drone.motorsStates);
+    socket.emit(drone.motorsSpeeds);
+    socket.emit(drone.position);
+    socket.emit(drone.angle);
 }, 200);
 
 export default drone;
